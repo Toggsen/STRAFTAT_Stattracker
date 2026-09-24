@@ -4,9 +4,17 @@ A BepInEx plugin for [STRAFTAT](https://store.steampowered.com/app/2386720/STRAF
 
 The mod only reads game state. It doesn't change gameplay or send anything over the network, and it's marked as vanilla-compatible, so you can keep playing in normal public lobbies.
 
+![StatTracker overlay during a match](images/ingame.jpg)
+
 ## Overlay
 
 `F8` shows or hides the overlay. `F7` switches between the Match and Session tabs.
+
+| Match tab | Session tab |
+| --- | --- |
+| ![Match tab](images/match-tab.png) | ![Session tab](images/session-tab.png) |
+
+Other players' names are blurred in these screenshots.
 
 | Column | Meaning |
 | --- | --- |
