@@ -16,7 +16,7 @@ namespace StatTracker
     {
         public const string Guid = "toggsen.straftat.stattracker";
         public const string Name = "StatTracker";
-        public const string Version = "1.0.0";
+        public const string Version = "1.1.0";
 
         internal static ManualLogSource Log;
         internal static Tracker Tracker;
@@ -39,8 +39,8 @@ namespace StatTracker
             ToggleKey = Config.Bind("Controls", "ToggleOverlay", new KeyboardShortcut(KeyCode.F8), "Show / hide the stats overlay.");
             ScopeKey = Config.Bind("Controls", "CycleScope", new KeyboardShortcut(KeyCode.F7), "Switch between Match and Session stats.");
             VisibleOnStart = Config.Bind("Overlay", "VisibleOnStart", true, "Whether the overlay is visible when the game starts.");
-            PositionX = Config.Bind("Overlay", "PositionX", -12f, "Horizontal position in pixels. Negative values anchor to the right edge of the screen.");
-            PositionY = Config.Bind("Overlay", "PositionY", 120f, "Vertical position in pixels from the top of the screen.");
+            PositionX = Config.Bind("Overlay", "PositionX", 12f, "Horizontal position in pixels from the left edge. Negative values anchor to the right edge of the screen.");
+            PositionY = Config.Bind("Overlay", "PositionY", 12f, "Vertical position in pixels from the top of the screen.");
             FontSize = Config.Bind("Overlay", "FontSize", 16, "Overlay font size at 1080p (scaled automatically for other resolutions).");
             WriteHistory = Config.Bind("History", "WriteMatchHistory", true, "Append a summary line to BepInEx/StatTracker_history.txt at the end of every match.");
 

@@ -10,7 +10,7 @@ namespace StatTracker
 
         private bool _visible;
         private bool _showSession;
-        private GUIStyle _label, _rich, _right, _header;
+        private GUIStyle _label, _right, _bold;
         private Texture2D _background;
         private int _styleFontSize;
 
@@ -40,9 +40,8 @@ namespace StatTracker
 
             _label = new GUIStyle(GUI.skin.label) { fontSize = size, richText = false, clipping = TextClipping.Clip, wordWrap = false };
             _label.normal.textColor = Color.white;
-            _rich = new GUIStyle(_label) { richText = true };
             _right = new GUIStyle(_label) { alignment = TextAnchor.UpperRight };
-            _header = new GUIStyle(_label) { fontStyle = FontStyle.Bold };
+            _bold = new GUIStyle(_label) { fontStyle = FontStyle.Bold };
 
             if (_background == null)
             {
@@ -82,7 +81,7 @@ namespace StatTracker
 
             float cx = x + pad, cy = y + pad, inner = width - pad * 2;
 
-            GUI.Label(new Rect(cx, cy, inner, line), Title(tracker, scope), _header);
+            GUI.Label(new Rect(cx, cy, inner, line), Title(tracker, scope), _bold);
             GUI.color = DimColor;
             GUI.Label(new Rect(cx, cy, inner, line), $"[{Plugin.ScopeKey.Value}] {(_showSession ? "match" : "session")}", _right);
             cy += line;
@@ -90,27 +89,24 @@ namespace StatTracker
             GUI.Label(new Rect(cx, cy, nameW, line), "Player", _label);
             for (int i = 0; i < columns.Length; i++)
                 GUI.Label(new Rect(cx + nameW + colW * i, cy, colW, line), columns[i], _right);
-            GUI.color = Color.white;
-            cy += line;
 
             if (rows.Count == 0)
             {
-                GUI.color = DimColor;
-                GUI.Label(new Rect(cx, cy, inner, line), "No data yet", _label);
-                GUI.color = Color.white;
                 cy += line;
+                GUI.Label(new Rect(cx, cy, inner, line), "No data yet", _label);
             }
+            GUI.color = Color.white;
+            cy += line;
+
             foreach (var p in rows)
             {
-                bool local = p.Key == localKey;
-                DrawName(new Rect(cx, cy, nameW, line), p, local);
-
-                GUI.color = local ? LocalColor : Color.white;
                 float kd = p.Deaths == 0 ? p.Kills : (float)p.Kills / p.Deaths;
                 string[] values = { p.Kills.ToString(), p.Deaths.ToString(), kd.ToString("0.00"), p.RoundsWon.ToString(), p.MatchesWon.ToString() };
+
+                GUI.color = p.Key == localKey ? LocalColor : Color.white;
+                GUI.Label(new Rect(cx, cy, nameW, line), p.Name, _label);
                 for (int i = 0; i < columns.Length; i++)
                     GUI.Label(new Rect(cx + nameW + colW * i, cy, colW, line), values[i], _right);
-                GUI.color = Color.white;
                 cy += line;
             }
 
@@ -118,21 +114,6 @@ namespace StatTracker
             GUI.color = LocalColor;
             GUI.Label(new Rect(cx, cy, inner, line), $"Your damage: {scope.Damage:0}", _label);
             GUI.color = Color.white;
-        }
-
-        private void DrawName(Rect rect, PlayerStats p, bool local)
-        {
-            string gradient = NameRenderer.Colorize(p.RawName);
-            if (gradient != null)
-            {
-                GUI.color = Color.white;
-                GUI.Label(rect, local ? "<b>" + gradient + "</b>" : gradient, _rich);
-            }
-            else
-            {
-                GUI.color = local ? LocalColor : Color.white;
-                GUI.Label(rect, p.Name, _label);
-            }
         }
 
         private static string Title(Tracker tracker, StatScope scope)

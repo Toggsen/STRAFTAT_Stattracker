@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>StatTracker</AssemblyName>
     <RootNamespace>StatTracker</RootNamespace>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <LangVersion>latest</LangVersion>
     <DebugType>embedded</DebugType>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -30,9 +30,6 @@
     <Reference Include="Assembly-CSharp"><HintPath>$(ManagedDir)Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="ComputerysModdingUtilities"><HintPath>$(ManagedDir)ComputerysModdingUtilities.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="FishNet.Runtime"><HintPath>$(ManagedDir)FishNet.Runtime.dll</HintPath><Private>false</Private></Reference>
-    <Reference Include="Heathen.Steamworks"><HintPath>$(ManagedDir)Heathen.Steamworks.dll</HintPath><Private>false</Private></Reference>
-    <Reference Include="com.rlabrecque.steamworks.net"><HintPath>$(ManagedDir)com.rlabrecque.steamworks.net.dll</HintPath><Private>false</Private></Reference>
-    <Reference Include="Unity.TextMeshPro"><HintPath>$(ManagedDir)Unity.TextMeshPro.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine"><HintPath>$(ManagedDir)UnityEngine.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(ManagedDir)UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.IMGUIModule"><HintPath>$(ManagedDir)UnityEngine.IMGUIModule.dll</HintPath><Private>false</Private></Reference>

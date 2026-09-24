@@ -1,6 +1,6 @@
 # STRAFTAT StatTracker
 
-A BepInEx plugin for [STRAFTAT](https://store.steampowered.com/app/2386720/STRAFTAT/) that tracks kills, deaths, rounds won and matches won for everyone in your lobby, plus the damage you deal yourself. The stats are shown in a small overlay, for the current match and for the whole session.
+A BepInEx plugin for [STRAFTAT](https://store.steampowered.com/app/2386720/STRAFTAT/) that tracks kills, deaths, rounds won and matches won for everyone in your lobby, plus the damage you deal yourself. The stats are shown in a small overlay, for the current match and for the session with the current group of players.
 
 The mod only reads game state. It doesn't change gameplay or send anything over the network, and it's marked as vanilla-compatible, so you can keep playing in normal public lobbies.
 
@@ -15,14 +15,14 @@ The mod only reads game state. It doesn't change gameplay or send anything over 
 | RW | Rounds won |
 | MW | Matches won (Session tab only) |
 
-Below the table is the damage you've dealt, in the same units as the game's health display (100 = full health). Your own row is highlighted, and gradient names keep their colors.
+Below the table is the damage you've dealt, in the same units as the game's health display (100 = full health). Your own row is shown in yellow.
 
 ## Installing
 
 1. Download BepInEx 5 for Windows x64 (`BepInEx_win_x64_5.4.23.x.zip`) from the [BepInEx releases](https://github.com/BepInEx/BepInEx/releases) and extract it into the game folder, so that `winhttp.dll` ends up next to `STRAFTAT.exe`.
 2. Start the game once and close it again. BepInEx creates its folders on the first start.
 3. Download `StatTracker.dll` from the [releases](https://github.com/Toggsen/STRAFTAT_Stattracker/releases) of this repository and put it in `BepInEx\plugins\StatTracker\`.
-4. Start the game. The overlay shows up in the top right corner.
+4. Start the game. The overlay shows up in the top left corner.
 
 To find the game folder, right-click STRAFTAT in Steam and choose Manage > Browse local files.
 
@@ -41,8 +41,8 @@ The config file `BepInEx\config\toggsen.straftat.stattracker.cfg` is created the
 | `ToggleOverlay` | F8 | Show / hide the overlay |
 | `CycleScope` | F7 | Switch between Match and Session |
 | `VisibleOnStart` | true | Show the overlay when the game starts |
-| `PositionX` | -12 | Horizontal position in pixels. Negative values are measured from the right edge |
-| `PositionY` | 120 | Vertical position in pixels |
+| `PositionX` | 12 | Horizontal position in pixels from the left edge. Negative values are measured from the right edge |
+| `PositionY` | 12 | Vertical position in pixels |
 | `FontSize` | 16 | Font size at 1080p, scaled for other resolutions |
 | `WriteMatchHistory` | true | Add a one-line summary of every match to `BepInEx\StatTracker_history.txt` |
 
@@ -72,7 +72,7 @@ The plugin uses Harmony to hook a few game methods. Every hook is a prefix or po
 
 **Matches.** When the victory screen opens, the team with the most rounds gets the match win. This is the same check the game uses to decide who sees "Victory".
 
-A match starts when players spawn on the first map and ends at the victory screen, or when you go back to the main menu. The session covers everything since the game was started. Stats aren't saved between sessions, apart from the history file.
+A match starts when players spawn on the first map and ends at the victory screen, or when you go back to the main menu. The session covers the current group of players. It starts over as soon as someone new joins, which includes joining a different lobby, but not when someone leaves. Stats aren't kept after you close the game, apart from the history file.
 
 ### Limitations
 

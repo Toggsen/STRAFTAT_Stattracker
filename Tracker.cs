@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using BepInEx;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -10,9 +11,11 @@ namespace StatTracker
 {
     internal readonly struct PlayerRef
     {
+        // Names can contain TextMeshPro tags, e.g. <gradient=Artist>Name</gradient> or <#ff0000>.
+        private static readonly Regex Tags = new Regex(@"</?(?:[A-Za-z][A-Za-z0-9_-]*|#[0-9A-Fa-f]{3,8})(?:[ =][^>]*)?>", RegexOptions.Compiled);
+
         public readonly string Key;
         public readonly string Name;
-        public readonly string RawName;
         public readonly int LobbyId;
 
         public PlayerRef(ClientInstance client)
@@ -20,10 +23,9 @@ namespace StatTracker
             int lobbyId = client.PlayerId;
             ulong steamId = client.PlayerSteamID;
             LobbyId = lobbyId;
-            // Steam ID keeps session stats stable across lobbies; lobby slot is the fallback.
+            // Steam ID identifies a player across lobbies; lobby slot is the fallback.
             Key = steamId != 0 ? "steam:" + steamId : "lobby:" + lobbyId;
-            RawName = client.PlayerName ?? string.Empty;
-            string plain = NameRenderer.StripTags(RawName);
+            string plain = Tags.Replace(client.PlayerName ?? string.Empty, string.Empty).Trim();
             Name = plain.Length > 0 ? plain : "Player " + lobbyId;
         }
     }
@@ -32,7 +34,6 @@ namespace StatTracker
     {
         public string Key;
         public string Name;
-        public string RawName;
         public int Kills;
         public int Deaths;
         public int RoundsWon;
@@ -56,7 +57,6 @@ namespace StatTracker
                 Players[player.Key] = stats;
             }
             stats.Name = player.Name;
-            stats.RawName = player.RawName;
             return stats;
         }
 
@@ -93,6 +93,7 @@ namespace StatTracker
         private readonly Dictionary<int, PlayerRef> _playersByRoot = new Dictionary<int, PlayerRef>();
         private readonly HashSet<int> _killingBlowLanded = new HashSet<int>();
         private readonly List<PendingDeath> _pending = new List<PendingDeath>();
+        private readonly HashSet<string> _sessionPlayers = new HashSet<string>();
         private bool _matchStartPending;
         private bool _matchResultRecorded;
         private int _matchCounter;
@@ -227,6 +228,7 @@ namespace StatTracker
             if (t >= _nextScan)
             {
                 _nextScan = t + 1f;
+                ResetSessionOnNewPlayers();
                 foreach (var health in Object.FindObjectsOfType<PlayerHealth>())
                     Register(health);
                 EnsureLobbyPlayersListed();
@@ -316,6 +318,28 @@ namespace StatTracker
                 .Where(c => c != null && TeamOf(c.PlayerId) == teamId)
                 .Select(c => new PlayerRef(c))
                 .ToList();
+        }
+
+        // Session stats cover the current group of players. When someone joins who isn't part of
+        // that group yet (this includes joining a different lobby), the session starts over.
+        private void ResetSessionOnNewPlayers()
+        {
+            var current = ClientInstance.playerInstances.Values
+                // PlayerName is set together with the Steam ID once a player has been fully added.
+                .Where(c => c != null && !string.IsNullOrEmpty(c.PlayerName))
+                .Select(c => new PlayerRef(c).Key)
+                .ToList();
+            if (current.All(_sessionPlayers.Contains))
+                return;
+
+            bool hadPlayers = _sessionPlayers.Count > 0;
+            _sessionPlayers.Clear();
+            _sessionPlayers.UnionWith(current);
+            if (!hadPlayers)
+                return;
+
+            Session.Reset();
+            Plugin.Log.LogInfo("New player joined, session stats reset.");
         }
 
         private void EnsureLobbyPlayersListed()
