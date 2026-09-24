@@ -93,3 +93,7 @@ dotnet build -c Release -p:GameDir="C:\Program Files (x86)\Steam\steamapps\commo
 The project references the game assemblies in `STRAFTAT_Data\Managed` and BepInEx in `BepInEx\core`. If you clone the repository two folders below the game folder (for example `STRAFTAT\Mods\StatTracker`), you can leave out `GameDir`. After a successful build the DLL is copied to `BepInEx\plugins\StatTracker`.
 
 Built against STRAFTAT 1.4.9f and BepInEx 5.4.23.5.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
