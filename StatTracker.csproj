@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>StatTracker</AssemblyName>
+    <RootNamespace>StatTracker</RootNamespace>
+    <Version>1.0.0</Version>
+    <LangVersion>latest</LangVersion>
+    <DebugType>embedded</DebugType>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <!--
+    Game folder. By default the project is expected two levels below it (e.g. STRAFTAT\Mods\StatTracker).
+    Otherwise build with -p:GameDir="path\to\STRAFTAT\".
+  -->
+  <PropertyGroup>
+    <GameDir Condition="'$(GameDir)' == ''">$(MSBuildThisFileDirectory)..\..\</GameDir>
+    <GameDir Condition="!HasTrailingSlash('$(GameDir)')">$(GameDir)\</GameDir>
+    <ManagedDir>$(GameDir)STRAFTAT_Data\Managed\</ManagedDir>
+    <!-- Standard install has BepInEx in the game folder; also supports it living in Mods\BepInEx. -->
+    <BepInExDir Condition="'$(BepInExDir)' == '' And Exists('$(GameDir)BepInEx\core\BepInEx.dll')">$(GameDir)BepInEx\</BepInExDir>
+    <BepInExDir Condition="'$(BepInExDir)' == ''">$(GameDir)Mods\BepInEx\</BepInExDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx"><HintPath>$(BepInExDir)core\BepInEx.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(BepInExDir)core\0Harmony.dll</HintPath><Private>false</Private></Reference>
+
+    <Reference Include="Assembly-CSharp"><HintPath>$(ManagedDir)Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="ComputerysModdingUtilities"><HintPath>$(ManagedDir)ComputerysModdingUtilities.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="FishNet.Runtime"><HintPath>$(ManagedDir)FishNet.Runtime.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Heathen.Steamworks"><HintPath>$(ManagedDir)Heathen.Steamworks.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="com.rlabrecque.steamworks.net"><HintPath>$(ManagedDir)com.rlabrecque.steamworks.net.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Unity.TextMeshPro"><HintPath>$(ManagedDir)Unity.TextMeshPro.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(ManagedDir)UnityEngine.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(ManagedDir)UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.IMGUIModule"><HintPath>$(ManagedDir)UnityEngine.IMGUIModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.TextRenderingModule"><HintPath>$(ManagedDir)UnityEngine.TextRenderingModule.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+  <!-- Copy the built plugin into BepInEx\plugins\StatTracker\ -->
+  <Target Name="DeployPlugin" AfterTargets="Build" Condition="Exists('$(BepInExDir)plugins')">
+    <MakeDir Directories="$(BepInExDir)plugins\StatTracker" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BepInExDir)plugins\StatTracker" />
+  </Target>
+
+</Project>
